@@ -67,16 +67,38 @@ public class EditarCadastro extends JFrame {
             new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     boolean atualizou = false;
-                    try {
-                        atualizou = NavegadorDeRegistro.atualizarRegistro("db_teste", "tbl_teste", idJTextField.getText(), nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        System.out.println();
-                    }
-                    if (atualizou) {
-                        notificacaoJLabel.setText("Cadastro atualizado com sucesso!");
+                    if (idJTextField.getText().trim().equals("")) {
+                        try {
+                            atualizou = NavegadorDeRegistro.cadastrarRegistro("db_teste", "tbl_teste", nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
+                            novoJButton.setEnabled(true);
+                            verJButton.setEnabled(true);
+                            editarJButton.setEnabled(false);
+
+                            String[] resultado = NavegadorDeRegistro.ultimoRegistro("db_teste", "tbl_teste");
+                            idJTextField.setText(resultado[0]);
+                            nomeJTextField.setText(resultado[1]);
+                            strNome = nomeJTextField.getText();
+                            emailJTextField.setText(resultado[2]);
+                            strEmail = emailJTextField.getText();
+                            editarJButton.setEnabled(false);
+                            proximoJButton.setEnabled(false);
+                            ultimoJButton.setEnabled(false);
+                            primeiroJButton.setEnabled(true);
+                            anteriorJButton.setEnabled(true);
+                            notificacaoJLabel.setText("Cadastro inserido com sucesso!");
+                        } catch (Exception e) {
+                            System.out.println("Ops! Deu ruim, veja o erro: " + e);
+                            notificacaoJLabel.setText("Deu ruim o cadastro...");
+                        }
                     } else {
-                        notificacaoJLabel.setText("Não foi possível atualizar o cadastro.");
+                        try {
+                            atualizou = NavegadorDeRegistro.atualizarRegistro("db_teste", "tbl_teste", idJTextField.getText(), nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
+                            notificacaoJLabel.setText("Cadastro atualizado com sucesso!");
+                            editarJButton.setEnabled(false);
+                        } catch (Exception e) {
+                            System.out.println("Ops! Deu ruim, veja o erro: " + e);
+                            notificacaoJLabel.setText("Deu ruim atualizar o cadastro...");
+                        }
                     }
                 }
             }
