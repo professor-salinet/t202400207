@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 public class EditarCadastro extends JFrame {
     private final JLabel tituloJLabel = new JLabel("Cadastro");
@@ -66,40 +67,7 @@ public class EditarCadastro extends JFrame {
         editarJButton.addActionListener(
             new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    boolean atualizou = false;
-                    if (idJTextField.getText().trim().equals("")) {
-                        try {
-                            atualizou = NavegadorDeRegistro.cadastrarRegistro("db_teste", "tbl_teste", nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
-                            novoJButton.setEnabled(true);
-                            verJButton.setEnabled(true);
-                            editarJButton.setEnabled(false);
-
-                            String[] resultado = NavegadorDeRegistro.ultimoRegistro("db_teste", "tbl_teste");
-                            idJTextField.setText(resultado[0]);
-                            nomeJTextField.setText(resultado[1]);
-                            strNome = nomeJTextField.getText();
-                            emailJTextField.setText(resultado[2]);
-                            strEmail = emailJTextField.getText();
-                            editarJButton.setEnabled(false);
-                            proximoJButton.setEnabled(false);
-                            ultimoJButton.setEnabled(false);
-                            primeiroJButton.setEnabled(true);
-                            anteriorJButton.setEnabled(true);
-                            notificacaoJLabel.setText("Cadastro inserido com sucesso!");
-                        } catch (Exception e) {
-                            System.out.println("Ops! Deu ruim, veja o erro: " + e);
-                            notificacaoJLabel.setText("Deu ruim o cadastro...");
-                        }
-                    } else {
-                        try {
-                            atualizou = NavegadorDeRegistro.atualizarRegistro("db_teste", "tbl_teste", idJTextField.getText(), nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
-                            notificacaoJLabel.setText("Cadastro atualizado com sucesso!");
-                            editarJButton.setEnabled(false);
-                        } catch (Exception e) {
-                            System.out.println("Ops! Deu ruim, veja o erro: " + e);
-                            notificacaoJLabel.setText("Deu ruim atualizar o cadastro...");
-                        }
-                    }
+                    atualizarRegistro();
                 }
             }
         );
@@ -256,7 +224,7 @@ public class EditarCadastro extends JFrame {
                     String[] resultado;
                     try {
                         resultado = NavegadorDeRegistro.deletarRegistro("db_teste", "tbl_teste", idJTextField.getText());
-                        if (resultado.length == 0) {
+                        if (resultado.length > 0) {
                             idJTextField.setText(resultado[0]);
                             nomeJTextField.setText(resultado[1]);
                             strNome = nomeJTextField.getText();
@@ -265,11 +233,9 @@ public class EditarCadastro extends JFrame {
                             editarJButton.setEnabled(false);
                             primeiroJButton.setEnabled(true);
                             anteriorJButton.setEnabled(true);
-                            notificacaoJLabel.setText("Registro apagado com sucesso.");
+                            notificacaoJLabel.setText("Registro apagado e avançado com sucesso.");
                         } else {
                             notificacaoJLabel.setText("Já está no último registro, por isso não é possível avançar o registro.");
-                            proximoJButton.setEnabled(false);
-                            ultimoJButton.setEnabled(false);
                         }
                     } catch(Exception e) {
                         System.out.println("Ops! Ocorreu algum erro ao deletar o registro. Veja o erro: " + e);
@@ -296,6 +262,29 @@ public class EditarCadastro extends JFrame {
             @Override
             public void keyReleased(KeyEvent e) {
                 verificarCampos();
+                if(e.getKeyCode() == 10 && idJTextField.getText().length() == 0) {
+                    if (nomeJTextField.getText().trim().length() == 0) {
+                        JOptionPane.showMessageDialog(linha8, "Ops! Tem que digitar o nome", "Mensagem de erro", JOptionPane.PLAIN_MESSAGE);
+                        nomeJTextField.requestFocus();
+                        return;
+                    }
+                    if (emailJTextField.getText().trim().length() == 0) {
+                        JOptionPane.showMessageDialog(linha8, "Ops! Tem que digitar o email", "Mensagem de erro", JOptionPane.PLAIN_MESSAGE);
+                        emailJTextField.requestFocus();
+                        return;
+                    }
+                    if (emailJTextField.getText().trim().length() == 0) {
+                        JOptionPane.showMessageDialog(linha8, "Ops! Tem que digitar o email", "Mensagem de erro", JOptionPane.PLAIN_MESSAGE);
+                        emailJTextField.requestFocus();
+                        return;
+                    }
+                    if (senhaJTextField.getPassword().length > 0) {
+                        JOptionPane.showMessageDialog(linha8, "Ops! Tem que digitar a senha", "Mensagem de erro", JOptionPane.PLAIN_MESSAGE);
+                        senhaJTextField.requestFocus();
+                        return;
+                    }
+                    atualizarRegistro();
+                }
             }
         });
 
@@ -349,6 +338,43 @@ public class EditarCadastro extends JFrame {
             editarJButton.setEnabled(true);
         } else {
             editarJButton.setEnabled(false);
+        }
+    }
+
+    public void atualizarRegistro() {
+        boolean atualizou = false;
+        if (idJTextField.getText().trim().equals("")) {
+            try {
+                atualizou = NavegadorDeRegistro.cadastrarRegistro("db_teste", "tbl_teste", nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
+                novoJButton.setEnabled(true);
+                verJButton.setEnabled(true);
+                editarJButton.setEnabled(false);
+
+                String[] resultado = NavegadorDeRegistro.ultimoRegistro("db_teste", "tbl_teste");
+                idJTextField.setText(resultado[0]);
+                nomeJTextField.setText(resultado[1]);
+                strNome = nomeJTextField.getText();
+                emailJTextField.setText(resultado[2]);
+                strEmail = emailJTextField.getText();
+                editarJButton.setEnabled(false);
+                proximoJButton.setEnabled(false);
+                ultimoJButton.setEnabled(false);
+                primeiroJButton.setEnabled(true);
+                anteriorJButton.setEnabled(true);
+                notificacaoJLabel.setText("Cadastro inserido com sucesso!");
+            } catch (Exception e) {
+                System.out.println("Ops! Deu ruim, veja o erro: " + e);
+                notificacaoJLabel.setText("Deu ruim o cadastro...");
+            }
+        } else {
+            try {
+                atualizou = NavegadorDeRegistro.atualizarRegistro("db_teste", "tbl_teste", idJTextField.getText(), nomeJTextField.getText(), emailJTextField.getText(), senhaJTextField.getPassword());
+                notificacaoJLabel.setText("Cadastro atualizado com sucesso!");
+                editarJButton.setEnabled(false);
+            } catch (Exception e) {
+                System.out.println("Ops! Deu ruim, veja o erro: " + e);
+                notificacaoJLabel.setText("Deu ruim atualizar o cadastro...");
+            }
         }
     }
 

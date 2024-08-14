@@ -27,10 +27,14 @@ public class NavegadorDeRegistro {
             String[] resultado = {"","",""};
             while (rstSqlRegistroAnterior.next()) {
                 if (id.equals(rstSqlRegistroAnterior.getString("id"))) {
-                    rstSqlRegistroAnterior.next();
-                    resultado[0] = rstSqlRegistroAnterior.getString("id");
-                    resultado[1] = rstSqlRegistroAnterior.getString("nome");
-                    resultado[2] = rstSqlRegistroAnterior.getString("email");
+                    try {
+                        rstSqlRegistroAnterior.next();
+                        resultado[0] = rstSqlRegistroAnterior.getString("id");
+                        resultado[1] = rstSqlRegistroAnterior.getString("nome");
+                        resultado[2] = rstSqlRegistroAnterior.getString("email");
+                    } catch (Exception e) {
+                        System.out.println("Ops! Parece que já está no primeiro registro. Veja o erro: " + e);
+                    }
                     break;
                 }
             }
