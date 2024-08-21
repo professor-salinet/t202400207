@@ -21,29 +21,21 @@ public class NavegadorDeRegistro {
         int idPessoa = Integer.parseInt(id);
         int proximoId = idPessoa - 1;
         if (proximoId >= 1) {
-            String strSqlRegistroAnterior = "select * from `" + db + "`.`" + tbl + "` order by `id` desc;";
+            String strSqlRegistroAnterior = "select * from `" + db + "`.`" + tbl + "` where `id` < " + id + " order by `id` desc limit 1;";
             Statement stmSqlRegistroAnterior = conexao.createStatement();
-            ResultSet rstSqlRegistroAnterior = stmSqlRegistroAnterior.executeQuery(strSqlRegistroAnterior);
             String[] resultado = {"","",""};
-            while (rstSqlRegistroAnterior.next()) {
-                if (id.equals(rstSqlRegistroAnterior.getString("id"))) {
-                    try {
-                        rstSqlRegistroAnterior.next();
-                        resultado[0] = rstSqlRegistroAnterior.getString("id");
-                        resultado[1] = rstSqlRegistroAnterior.getString("nome");
-                        resultado[2] = rstSqlRegistroAnterior.getString("email");
-                    } catch (Exception e) {
-                        System.out.println("Ops! Parece que já está no primeiro registro. Veja o erro: " + e);
-                    }
-                    break;
-                }
+            try {
+                ResultSet rstSqlRegistroAnterior = stmSqlRegistroAnterior.executeQuery(strSqlRegistroAnterior);
+                rstSqlRegistroAnterior.next();
+                resultado[0] = rstSqlRegistroAnterior.getString("id");
+                resultado[1] = rstSqlRegistroAnterior.getString("nome");
+                resultado[2] = rstSqlRegistroAnterior.getString("email");
+            } catch (Exception e) {
+                System.out.println("Ops! Parece que já está no primeiro registro. Veja o erro: " + e);
+                return null;
             }
             stmSqlRegistroAnterior.close();
-            if (resultado[0] == "") {
-                return null;
-            } else {
-                return resultado;
-            }
+            return resultado;
         } else {
             return null;
         }
@@ -52,25 +44,21 @@ public class NavegadorDeRegistro {
     public static String[] proximoRegistro(String db, String tbl, String id) throws Exception {
         Connection conexao = MySQLConnector.conectar();
         try {
-            String strSqlProximoRegistro = "select * from `" + db + "`.`" + tbl + "` order by `id` asc;";
+            String strSqlProximoRegistro = "select * from `" + db + "`.`" + tbl + "` where `id` > " + id + " order by `id` asc limit 1;";
             Statement stmSqlProximoRegistro = conexao.createStatement();
-            ResultSet rstSqlProximoRegistro = stmSqlProximoRegistro.executeQuery(strSqlProximoRegistro);
             String[] resultado = {"","",""};
-            while (rstSqlProximoRegistro.next()) {
-                if (id.equals(rstSqlProximoRegistro.getString("id"))) {
-                    rstSqlProximoRegistro.next();
-                    resultado[0] = rstSqlProximoRegistro.getString("id");
-                    resultado[1] = rstSqlProximoRegistro.getString("nome");
-                    resultado[2] = rstSqlProximoRegistro.getString("email");
-                    break;
-                }
-            }
-            stmSqlProximoRegistro.close();
-            if (resultado[0] == "") {
+            try {
+                ResultSet rstSqlProximoRegistro = stmSqlProximoRegistro.executeQuery(strSqlProximoRegistro);
+                rstSqlProximoRegistro.next();
+                resultado[0] = rstSqlProximoRegistro.getString("id");
+                resultado[1] = rstSqlProximoRegistro.getString("nome");
+                resultado[2] = rstSqlProximoRegistro.getString("email");
+                stmSqlProximoRegistro.close();
+            } catch (Exception e) {
+                System.out.println("Ops! Parece que já está no último registro...");
                 return null;
-            } else {
-                return resultado;
             }
+            return resultado;
         } catch (Exception e) {
             return null;
         }
@@ -89,6 +77,44 @@ public class NavegadorDeRegistro {
                 rstSqlUltimoRegistro.getString("email")
             };
             stmSqlUltimoRegistro.close();
+            return resultado;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String[] irParaId(String db, String tbl, String id) throws Exception {
+        Connection conexao = MySQLConnector.conectar();
+        try {
+            String strSqlRegistro = "select * from `" + db + "`.`" + tbl + "` where `id` = " + id + ";";
+            Statement stmSqlRegistro = conexao.createStatement();
+            ResultSet rstSqlRegistro = stmSqlRegistro.executeQuery(strSqlRegistro);
+            rstSqlRegistro.next();
+            String[] resultado = {
+                rstSqlRegistro.getString("id"),
+                rstSqlRegistro.getString("nome"),
+                rstSqlRegistro.getString("email")
+            };
+            stmSqlRegistro.close();
+            return resultado;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String[] pesquisarNome(String db, String tbl, String nome, String email) throws Exception {
+        Connection conexao = MySQLConnector.conectar();
+        try {
+            String strSqlPesquisarNome = "select * from `" + db + "`.`" + tbl + "` where `nome` like '%" + nome + "%' or `email` like '%" + email + "%' order by `id` asc limit 1;";
+            Statement stmSqlPesquisarNome = conexao.createStatement();
+            ResultSet rstSqlPesquisarNome = stmSqlPesquisarNome.executeQuery(strSqlPesquisarNome);
+            rstSqlPesquisarNome.next();
+            String[] resultado = {
+                rstSqlPesquisarNome.getString("id"),
+                rstSqlPesquisarNome.getString("nome"),
+                rstSqlPesquisarNome.getString("email")
+            };
+            stmSqlPesquisarNome.close();
             return resultado;
         } catch (Exception e) {
             return null;
