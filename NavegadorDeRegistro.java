@@ -1,9 +1,13 @@
 import java.sql.*;
 
 public class NavegadorDeRegistro {
-    public static String[] primeiroRegistro(String db, String tbl) throws Exception {
+    public static String[] primeiroRegistro(String db, String tbl, String pesquisa) throws Exception {
         Connection conexao = MySQLConnector.conectar();
-        String strSqlPrimeiroRegistro = "select * from `" + db + "`.`" + tbl + "` order by `id` asc limit 1;";
+        String strSqlPesquisa = "";
+        if (pesquisa != null) {
+            strSqlPesquisa = " where `nome` like '%" + pesquisa + "%' or `email` like '%" + pesquisa + "%'";
+        }
+        String strSqlPrimeiroRegistro = "select * from `" + db + "`.`" + tbl + "`" + strSqlPesquisa + " order by `id` asc limit 1;";
         Statement stmSqlPrimeiroRegistro = conexao.createStatement();
         ResultSet rstSqlPrimeiroRegistro = stmSqlPrimeiroRegistro.executeQuery(strSqlPrimeiroRegistro);
         rstSqlPrimeiroRegistro.next();
@@ -16,12 +20,16 @@ public class NavegadorDeRegistro {
         return resultado;
     }
 
-    public static String[] registroAnterior(String db, String tbl, String id) throws Exception {
+    public static String[] registroAnterior(String db, String tbl, String id, String pesquisa) throws Exception {
         Connection conexao = MySQLConnector.conectar();
+        String strSqlPesquisa = "";
+        if (pesquisa != null) {
+            strSqlPesquisa = " and (`nome` like '%" + pesquisa + "%' or `email` like '%" + pesquisa + "%')";
+        }
         int idPessoa = Integer.parseInt(id);
         int proximoId = idPessoa - 1;
         if (proximoId >= 1) {
-            String strSqlRegistroAnterior = "select * from `" + db + "`.`" + tbl + "` where `id` < " + id + " order by `id` desc limit 1;";
+            String strSqlRegistroAnterior = "select * from `" + db + "`.`" + tbl + "` where `id` < "+ id + strSqlPesquisa + " order by `id` desc limit 1;";
             Statement stmSqlRegistroAnterior = conexao.createStatement();
             String[] resultado = {"","",""};
             try {
@@ -41,10 +49,14 @@ public class NavegadorDeRegistro {
         }
     }
 
-    public static String[] proximoRegistro(String db, String tbl, String id) throws Exception {
+    public static String[] proximoRegistro(String db, String tbl, String id, String pesquisa) throws Exception {
         Connection conexao = MySQLConnector.conectar();
+        String strSqlPesquisa = "";
+        if (pesquisa != null) {
+            strSqlPesquisa = " and (`nome` like '%" + pesquisa + "%' or `email` like '%" + pesquisa + "%')";
+        }
         try {
-            String strSqlProximoRegistro = "select * from `" + db + "`.`" + tbl + "` where `id` > " + id + " order by `id` asc limit 1;";
+            String strSqlProximoRegistro = "select * from `" + db + "`.`" + tbl + "` where `id` > " + id + strSqlPesquisa + " order by `id` asc limit 1;";
             Statement stmSqlProximoRegistro = conexao.createStatement();
             String[] resultado = {"","",""};
             try {
@@ -64,10 +76,14 @@ public class NavegadorDeRegistro {
         }
     }
 
-    public static String[] ultimoRegistro(String db, String tbl) throws Exception {
+    public static String[] ultimoRegistro(String db, String tbl, String pesquisa) throws Exception {
         Connection conexao = MySQLConnector.conectar();
+        String strSqlPesquisa = "";
+        if (pesquisa != null) {
+            strSqlPesquisa = " where `nome` like '%" + pesquisa + "%' or `email` like '%" + pesquisa + "%'";
+        }
         try {
-            String strSqlUltimoRegistro = "select * from `" + db + "`.`" + tbl + "` order by `id` desc limit 1;";
+            String strSqlUltimoRegistro = "select * from `" + db + "`.`" + tbl + "`" + strSqlPesquisa + " order by `id` desc limit 1;";
             Statement stmSqlUltimoRegistro = conexao.createStatement();
             ResultSet rstSqlUltimoRegistro = stmSqlUltimoRegistro.executeQuery(strSqlUltimoRegistro);
             rstSqlUltimoRegistro.next();

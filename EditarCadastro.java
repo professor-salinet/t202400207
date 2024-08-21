@@ -71,7 +71,9 @@ public class EditarCadastro extends JFrame {
         pesquisarJButton.addActionListener(
             new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    //... tem que implementar ainda
+                    if (pesquisarJTextField.getText().trim().length() > 0) {
+                        iniciarCampos();
+                    }
                 }
             }
         );
@@ -91,7 +93,7 @@ public class EditarCadastro extends JFrame {
                 public void actionPerformed(ActionEvent event) {
                     String[] resultado;
                     try {
-                        resultado = NavegadorDeRegistro.primeiroRegistro(dbPadrao, tblPadrao);
+                        resultado = NavegadorDeRegistro.primeiroRegistro(dbPadrao, tblPadrao, pesquisarJTextField.getText().trim());
                         idJTextField.setText(resultado[0]);
                         nomeJTextField.setText(resultado[1]);
                         strNome = nomeJTextField.getText();
@@ -118,7 +120,7 @@ public class EditarCadastro extends JFrame {
                     if (idJTextField.getText().length() > 0) {
                         String[] resultado;
                         try {
-                            resultado = NavegadorDeRegistro.registroAnterior(dbPadrao, tblPadrao, idJTextField.getText());
+                            resultado = NavegadorDeRegistro.registroAnterior(dbPadrao, tblPadrao, idJTextField.getText(), pesquisarJTextField.getText().trim());
                             if (resultado != null) {
                                 idJTextField.setText(resultado[0]);
                                 nomeJTextField.setText(resultado[1]);
@@ -151,7 +153,7 @@ public class EditarCadastro extends JFrame {
                     if (idJTextField.getText().length() > 0) {
                         String[] resultado;
                         try {
-                            resultado = NavegadorDeRegistro.proximoRegistro(dbPadrao, tblPadrao, idJTextField.getText());
+                            resultado = NavegadorDeRegistro.proximoRegistro(dbPadrao, tblPadrao, idJTextField.getText(), pesquisarJTextField.getText().trim());
                             if (resultado != null) {
                                 idJTextField.setText(resultado[0]);
                                 nomeJTextField.setText(resultado[1]);
@@ -182,7 +184,7 @@ public class EditarCadastro extends JFrame {
             new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     try {
-                        String[] resultado = NavegadorDeRegistro.ultimoRegistro(dbPadrao, tblPadrao);
+                        String[] resultado = NavegadorDeRegistro.ultimoRegistro(dbPadrao, tblPadrao, pesquisarJTextField.getText().trim());
                         idJTextField.setText(resultado[0]);
                         nomeJTextField.setText(resultado[1]);
                         strNome = nomeJTextField.getText();
@@ -407,7 +409,7 @@ public class EditarCadastro extends JFrame {
                 pesquisarJButton.setEnabled(true);
                 editarJButton.setEnabled(false);
 
-                String[] resultado = NavegadorDeRegistro.ultimoRegistro(dbPadrao, tblPadrao);
+                String[] resultado = NavegadorDeRegistro.ultimoRegistro(dbPadrao, tblPadrao, pesquisarJTextField.getText().trim());
                 idJTextField.setText(resultado[0]);
                 nomeJTextField.setText(resultado[1]);
                 strNome = nomeJTextField.getText();
@@ -437,7 +439,7 @@ public class EditarCadastro extends JFrame {
 
     public void iniciarCampos() {
         try {
-            String[] resultado = NavegadorDeRegistro.primeiroRegistro(dbPadrao, tblPadrao);
+            String[] resultado = NavegadorDeRegistro.primeiroRegistro(dbPadrao, tblPadrao, pesquisarJTextField.getText().trim());
             notificacaoJLabel.setText("Primeio registro posicionado com sucesso");
             if (resultado != null) {
                 idJTextField.setText(resultado[0]);
