@@ -57,6 +57,7 @@ public class NovoCadastro extends JFrame {
                             stmSqlCadastrarRegistro.close();
                             notificacaoJLabel.setText("Cadastro realizado com sucesso!");
                             LoginFrame.lblNotificacoes.setText("Cadastro realizado com sucesso!");
+                            LoginFrame.appLoginFrame.setVisible(true);
                             dispose(); // fechar a própria tela, sem fechar a tela anterior
                         }
                     } catch (Exception e) {

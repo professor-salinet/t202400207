@@ -1,4 +1,4 @@
-import java.util.*;
+// import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -7,7 +7,7 @@ import java.sql.*;
 public class LoginFrame extends JFrame {
     private final JLabel lblLogin = new JLabel("Login");
     private final JLabel lblSenha = new JLabel("Senha");
-    public static final JLabel lblNotificacoes = new JLabel("Bem vindo! Faça login ou cadastre-se.");
+    public static final JLabel lblNotificacoes = new JLabel(setHtmlFormat("Bem vindo! Faça login ou cadastre-se."), SwingConstants.CENTER);
 
     private final JTextField txtLogin = new JTextField();
     private final JPasswordField txtSenha = new JPasswordField();
@@ -22,7 +22,7 @@ public class LoginFrame extends JFrame {
 
     public LoginFrame() {
         super("Tela de Login");
-        setLayout(new GridLayout(10,1,5,5));
+        setLayout(new GridLayout(7,1,5,5));
 
         JPanel pnlLinha1 = new JPanel(new GridLayout(1,1,5,5));
         JPanel pnlLinha2 = new JPanel(new GridLayout(1,1,5,5));
@@ -36,7 +36,7 @@ public class LoginFrame extends JFrame {
         JPanel pnlLinha10 = new JPanel(new GridLayout(1,1,5,5));
 
         pnlLinha1.add(new JLabel());
-        add(pnlLinha1);
+        // add(pnlLinha1);
 
         pnlLinha2.add(lblLogin);
         add(pnlLinha2);
@@ -51,17 +51,17 @@ public class LoginFrame extends JFrame {
         add(pnlLinha5);
 
         pnlLinha6.add(new JLabel());
-        add(pnlLinha6);
+        // add(pnlLinha6);
 
         pnlLinha7.add(btnLogin);
         pnlLinha7.add(btnCadastrar);
         add(pnlLinha7);
 
         pnlLinha8.add(new JLabel());
-        add(pnlLinha8);
+        // add(pnlLinha8);
 
         cbxAceite.setSelected(true);
-        pnlLinha9.setAlignment(FlowLayout.CENTER);
+        cbxAceite.setHorizontalAlignment(SwingConstants.CENTER);
         pnlLinha9.add(cbxAceite);
         add(pnlLinha9);
 
@@ -72,7 +72,13 @@ public class LoginFrame extends JFrame {
             new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     try {
-                        if (txtLogin.getText().trim().length() > 0) {
+                        if (txtLogin.getText().trim().length() == 0) {
+                            lblNotificacoes.setText(setHtmlFormat("É necessário digitar um login para acessar! Por favor, verifique e tente novamente."));
+                            txtLogin.requestFocus();
+                        } else if (String.valueOf(txtSenha.getPassword()).trim().length() == 0) {
+                            lblNotificacoes.setText(setHtmlFormat("É necessário digitar uma senha para acessar! Por favor, verifique e tente novamente."));
+                            txtSenha.requestFocus();
+                        } else {
                             Connection conexao = MySQLConnector.conectar();
                             String strSqlLogin = "select * from `" + dbPadrao + "`.`" + tblPadrao + "`" + " where `email` = '" + txtLogin.getText() + "' and `senha` = '" + String.valueOf(txtSenha.getPassword()) + "';";
                             Statement stmSqlLogin = conexao.createStatement();
@@ -81,11 +87,11 @@ public class LoginFrame extends JFrame {
                                 MenuFrame appMenuFrame = new MenuFrame();
                                 appMenuFrame.setDefaultCloseOperation(ABORT);
                             } else {
-                                lblNotificacoes.setText("Não foi encontrado o login e/ou senha digitados! Por favor, verifique e tente novamente.");
+                                lblNotificacoes.setText(setHtmlFormat("Não foi encontrado o login e/ou senha digitados! Por favor, verifique e tente novamente."));
                             }
                         }
                     } catch (Exception e) {
-                        lblNotificacoes.setText("Ops! Deu ruim no banco de dados, veja o erro: " + e);
+                        lblNotificacoes.setText(setHtmlFormat("Ops! Deu ruim no banco de dados, veja o erro: " + e));
                     }
                 }
             }
@@ -94,18 +100,25 @@ public class LoginFrame extends JFrame {
         btnCadastrar.addActionListener(
             new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
+                    setVisible(false);
                     NovoCadastro appNovoCadastro = new NovoCadastro();
                     appNovoCadastro.setDefaultCloseOperation(ABORT);
                 }
             }
         );
 
-        setSize(400, 400);
+        setSize(400, 300);
         setVisible(true);
     }
 
+    public static String setHtmlFormat(String strText) {
+        return "<html><body>" + strText + "</body></html>";
+    }
+
+    public static LoginFrame appLoginFrame;
+
     public static void main(String[] args) {
-        LoginFrame appJFrame = new LoginFrame();
-        appJFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        appLoginFrame = new LoginFrame();
+        appLoginFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 }
